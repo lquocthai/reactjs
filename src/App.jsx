@@ -1,12 +1,13 @@
 
 import './App.scss'
+import Header from './components/Header/Header.jsx'
 
 
 function App() {
   return (
     <>
       <div className='app'>
-        hello world nhánh dev
+        <Header />
       </div>
     </>
   )
