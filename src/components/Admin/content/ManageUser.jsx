@@ -2,6 +2,7 @@ import ModelCreateUser from "./ModelCreateUser";
 import './ManageUser.scss'
 import { FiPlusCircle } from "react-icons/fi";
 import { useState } from "react";
+import TableUser from "./TableUser";
 const ManageUser = (props) => {
     const [showModelCreateUser, setShowModelCreateUser] = useState(false)
     return (
@@ -17,7 +18,7 @@ const ManageUser = (props) => {
                     </button>
                 </div>
                 <div className="table-users-container">
-                    table users
+                    <TableUser />
                 </div>
                 <ModelCreateUser
                     show={showModelCreateUser}
