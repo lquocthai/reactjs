@@ -1,28 +1,14 @@
-import { getAllUser } from "../../../services/apiService";
-import { useEffect, useState } from "react"
+
 
 const TableUser = (props) => {
-    const [listUser, setListUser] = useState([])
+    const { listUser } = props;
 
-    // useEffect chayj sau khi render ra html duoi roi
-    //componentDisMount
-    // khoong sử dụng async trong effect
-    useEffect(() => {
-        fecthListUser();
-    }, []);
-
-    const fecthListUser = async () => {
-        let res = await getAllUser();
-        if (res.EC === 0) {
-            setListUser(res.DT)
-        }
-    }
     return (
         <>
             <table className="table table-hover table-bordered">
                 <thead>
                     <tr>
-                        <th scope="col">No</th>
+                        <th scope="col">ID</th>
                         <th scope="col">Username</th>
                         <th scope="col">Email</th>
                         <th scope="col">Role</th>
@@ -35,7 +21,7 @@ const TableUser = (props) => {
                         listUser.map((item, index) => {
                             return (
                                 <tr key={`table-user-${index}`}>
-                                    <th scope="row">{index + 1}</th>
+                                    <th scope="row">{item.id}</th>
                                     <td>{item.username}</td>
                                     <td>{item.email}</td>
                                     <td>@{item.role}</td>
