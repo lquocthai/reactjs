@@ -2,12 +2,19 @@ import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { FiPlusCircle } from "react-icons/fi";
-import axios from 'axios'
+import { toast } from 'react-toastify';
+import { postCreateUser } from '../../../services/apiService';
 const ModelCreateUser = (props) => {
     // bây giờ lấy show từ props cha truyền xuống không tạo usestate nữa
     const { show, setShow } = props;
 
     // const [show, setShow] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("");
+    const [role, setRole] = useState("USER");
+    const [image, setImage] = useState("");
+    const [previewImage, setPreviewImage] = useState("")
 
     const handleClose = () => {
         setShow(false);
@@ -19,12 +26,7 @@ const ModelCreateUser = (props) => {
         setPreviewImage("");
     };
     // const handleShow = () => setShow(true);
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
-    const [username, setUsername] = useState();
-    const [role, setRole] = useState("USER");
-    const [image, setImage] = useState();
-    const [previewImage, setPreviewImage] = useState("")
+
     const handleUpLoadImage = (event) => {
         // convert anhr thaành dạng blob
         if (event.target && event.target.files && event.target.files[0]) {
@@ -32,29 +34,41 @@ const ModelCreateUser = (props) => {
             setImage(event.target.files[0])
         }
     }
+    const validateEmail = (email) => {
+        return String(email)
+            .toLowerCase()
+            .match(
+                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            );
+    };
     const handleSubmitCreateUser = async () => {
         // validate 
+        const isValidEmail = validateEmail(email)
+        if (!isValidEmail) {
+            toast.error("Invalid email!");
 
+            // alert("invalid email")
+            // toast có 3 hàm error success info
+            return;
+        }
+        if (!password) {
+            toast.error('invalid password')
+            // alert("invalid password")
+            return;
+        }
         //call api
-        // let data = {
-        //     email: email,
-        //     password: password,
-        //     username: username,
-        //     role: role,
-        //     userImage: image
-
-        // }
         // api nào có tuyền file thì phải dùng formdata
-        const data = new FormData();
-        data.append('email', email);
-        data.append('password', password);
-        data.append('username', username);
-        data.append('role', role);
-        data.append('userImage', image);
+        // submit data
 
-        let res = await axios.post('http://localhost:8081/api/v1/participant', data)
 
-        console.log('>> check respone', res)
+        let data = await postCreateUser(email, password, username, role, image);
+        if (data && data.EC === 0) {
+            toast.success(data.EM)
+            handleClose()
+        }
+        if (data && data.EC !== 0) {
+            toast.error(data.EM)
+        }
     }
 
     return (
