@@ -2,13 +2,11 @@ import { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { FiPlusCircle } from "react-icons/fi";
-import { toast } from 'react-toastify';
-import { putUpdateUser } from '../../../services/apiService';
 import _ from 'lodash';
 
 const ModelUpdateUser = (props) => {
     // bây giờ lấy show từ props cha truyền xuống không tạo usestate nữa
-    const { show, setShow, dataUpdate } = props;
+    const { show, setShow, dataView } = props;
 
     // const [show, setShow] = useState(false);
     const [email, setEmail] = useState("");
@@ -20,19 +18,19 @@ const ModelUpdateUser = (props) => {
 
     // useeffect mỗi lần dataUpdate thay đổi thì hàm effect chạy lại nên để vào depen
     useEffect(() => {
-        console.log(`run effect`, dataUpdate)
+        console.log(`run effect`, dataView)
         // import lodash _ check điều kiện mảng arrayy....
-        if (!_.isEmpty(dataUpdate)) {
+        if (!_.isEmpty(dataView)) {
             //update state
-            setEmail(dataUpdate.email);
-            setUsername(dataUpdate.username);
-            setRole(dataUpdate.role)
+            setEmail(dataView.email);
+            setUsername(dataView.username);
+            setRole(dataView.role)
             setImage("");
-            if (dataUpdate.image) {
-                setPreviewImage(`data:image/jpeg;base64,${dataUpdate.image}`);
+            if (dataView.image) {
+                setPreviewImage(`data:image/jpeg;base64,${dataView.image}`);
             }
         }
-    }, [dataUpdate])
+    }, [dataView])
     const handleClose = () => {
         setShow(false);
         setEmail("");
@@ -41,34 +39,8 @@ const ModelUpdateUser = (props) => {
         setRole("USER")
         setImage("");
         setPreviewImage("");
-        props.requestUpdateData();
     };
-    // const handleShow = () => setShow(true);
 
-    const handleUpLoadImage = (event) => {
-        // convert anhr thaành dạng blob
-        if (event.target && event.target.files && event.target.files[0]) {
-            setPreviewImage(URL.createObjectURL(event.target.files[0]))
-            setImage(event.target.files[0])
-        }
-    }
-    const handleSubmitCreateUser = async () => {
-
-        //call api
-        // api nào có tuyền file thì phải dùng formdata
-        // submit data
-
-
-        let data = await putUpdateUser(dataUpdate.id, username, role, image);
-        if (data && data.EC === 0) {
-            toast.success(data.EM)
-            handleClose()
-            await props.fetchListUser();
-        }
-        if (data && data.EC !== 0) {
-            toast.error(data.EM)
-        }
-    }
     console.log(`render`)
     return (
         <>
@@ -85,7 +57,7 @@ const ModelUpdateUser = (props) => {
             >
 
                 <Modal.Header closeButton>
-                    <Modal.Title>Update A User</Modal.Title>
+                    <Modal.Title>View A User</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form className="row g-3">
@@ -114,6 +86,7 @@ const ModelUpdateUser = (props) => {
                             <input
                                 type="text"
                                 className="form-control"
+                                disabled
                                 value={username}
                                 onChange={(event) => setUsername(event.target.value)} />
                         </div>

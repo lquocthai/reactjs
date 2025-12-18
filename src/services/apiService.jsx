@@ -21,4 +21,8 @@ const putUpdateUser = (id, username, role, image) => {
     data.append('userImage', image);
     return axios.put('/api/v1/participant', data);
 }
-export { postCreateUser, getAllUser, putUpdateUser }
+// api này cần đạng json đầu vào k cần form ddata 
+const deleteUser = (userId) => {
+    return axios.delete('/api/v1/participant', { data: { id: userId } });
+}
+export { postCreateUser, getAllUser, putUpdateUser, deleteUser }
