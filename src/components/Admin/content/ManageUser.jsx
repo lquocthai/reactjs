@@ -4,8 +4,12 @@ import { FiPlusCircle } from "react-icons/fi";
 import TableUser from "./TableUser";
 import { getAllUser } from "../../../services/apiService";
 import { useEffect, useState } from "react"
+import ModelUpdateUser from "./ModelUpdateUser";
 const ManageUser = (props) => {
     const [showModelCreateUser, setShowModelCreateUser] = useState(false)
+    const [showModelUpdateUser, setShowModelUpdateUser] = useState(false)
+    const [dataUpdate, setDataUpdate] = useState({});
+
     const [listUser, setListUser] = useState([])
 
     // useEffect chayj sau khi render ra html duoi roi
@@ -21,6 +25,13 @@ const ManageUser = (props) => {
             setListUser(res.DT)
         }
     }
+    const handleClickBtnUpate = (user) => {
+        setShowModelUpdateUser(true);
+        setDataUpdate(user)
+    }
+    const requestUpdateData = () => {
+        setDataUpdate({})
+    }
     return (
         <div className="manage-user-container">
             <div className="title">
@@ -34,12 +45,24 @@ const ManageUser = (props) => {
                     </button>
                 </div>
                 <div className="table-users-container">
-                    <TableUser listUser={listUser} />
+                    <TableUser
+                        listUser={listUser}
+                        handleClickBtnUpate={handleClickBtnUpate}
+                    />
                 </div>
                 <ModelCreateUser
                     show={showModelCreateUser}
                     setShow={setShowModelCreateUser}
-                    fetchListUser={fetchListUser} />
+                    fetchListUser={fetchListUser}
+
+                />
+                <ModelUpdateUser
+                    show={showModelUpdateUser}
+                    setShow={setShowModelUpdateUser}
+                    dataUpdate={dataUpdate}
+                    fetchListUser={fetchListUser}
+                    requestUpdateData={requestUpdateData}
+                />
             </div>
         </div>
     )

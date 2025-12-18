@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { FiPlusCircle } from "react-icons/fi";
 import { toast } from 'react-toastify';
-import { postCreateUser } from '../../../services/apiService';
-const ModelCreateUser = (props) => {
+import { putUpdateUser } from '../../../services/apiService';
+import _ from 'lodash';
+
+const ModelUpdateUser = (props) => {
     // bây giờ lấy show từ props cha truyền xuống không tạo usestate nữa
-    const { show, setShow } = props;
+    const { show, setShow, dataUpdate } = props;
 
     // const [show, setShow] = useState(false);
     const [email, setEmail] = useState("");
@@ -16,6 +18,21 @@ const ModelCreateUser = (props) => {
     const [image, setImage] = useState("");
     const [previewImage, setPreviewImage] = useState("")
 
+    // useeffect mỗi lần dataUpdate thay đổi thì hàm effect chạy lại nên để vào depen
+    useEffect(() => {
+        console.log(`run effect`, dataUpdate)
+        // import lodash _ check điều kiện mảng arrayy....
+        if (!_.isEmpty(dataUpdate)) {
+            //update state
+            setEmail(dataUpdate.email);
+            setUsername(dataUpdate.username);
+            setRole(dataUpdate.role)
+            setImage("");
+            if (dataUpdate.image) {
+                setPreviewImage(`data:image/jpeg;base64,${dataUpdate.image}`);
+            }
+        }
+    }, [dataUpdate])
     const handleClose = () => {
         setShow(false);
         setEmail("");
@@ -24,6 +41,7 @@ const ModelCreateUser = (props) => {
         setRole("USER")
         setImage("");
         setPreviewImage("");
+        props.requestUpdateData()
     };
     // const handleShow = () => setShow(true);
 
@@ -34,34 +52,14 @@ const ModelCreateUser = (props) => {
             setImage(event.target.files[0])
         }
     }
-    const validateEmail = (email) => {
-        return String(email)
-            .toLowerCase()
-            .match(
-                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-            );
-    };
     const handleSubmitCreateUser = async () => {
-        // validate 
-        const isValidEmail = validateEmail(email)
-        if (!isValidEmail) {
-            toast.error("Invalid email!");
 
-            // alert("invalid email")
-            // toast có 3 hàm error success info
-            return;
-        }
-        if (!password) {
-            toast.error('invalid password')
-            // alert("invalid password")
-            return;
-        }
         //call api
         // api nào có tuyền file thì phải dùng formdata
         // submit data
 
 
-        let data = await postCreateUser(email, password, username, role, image);
+        let data = await putUpdateUser(dataUpdate.id, username, role, image);
         if (data && data.EC === 0) {
             toast.success(data.EM)
             handleClose()
@@ -71,7 +69,7 @@ const ModelCreateUser = (props) => {
             toast.error(data.EM)
         }
     }
-
+    console.log(`render`)
     return (
         <>
             {/* <Button variant="primary" onClick={handleShow}>
@@ -87,7 +85,7 @@ const ModelCreateUser = (props) => {
             >
 
                 <Modal.Header closeButton>
-                    <Modal.Title>Create new user</Modal.Title>
+                    <Modal.Title>Update A User</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form className="row g-3">
@@ -96,6 +94,7 @@ const ModelCreateUser = (props) => {
                             <input
                                 type="email"
                                 className="form-control"
+                                disabled
                                 value={email}
                                 onChange={(event) => setEmail(event.target.value)}
                             />
@@ -106,6 +105,7 @@ const ModelCreateUser = (props) => {
                                 type="password"
                                 className="form-control"
                                 value={password}
+                                disabled
                                 onChange={(event) => setPassword(event.target.value)} />
                         </div>
 
@@ -119,7 +119,7 @@ const ModelCreateUser = (props) => {
                         </div>
                         <div className="col-md-4">
                             <label className="form-label">Role</label>
-                            <select className="form-select" onChange={(event) => setRole(event.target.value)}>
+                            <select className="form-select" value={role} onChange={(event) => setRole(event.target.value)}>
                                 <option value={"USER"}>USER</option>
                                 <option value={"ADMIN"}>ADMIN</option>
                             </select>
@@ -160,4 +160,4 @@ const ModelCreateUser = (props) => {
         </>
     );
 }
-export default ModelCreateUser;
+export default ModelUpdateUser;
