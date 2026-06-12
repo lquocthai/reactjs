@@ -7,6 +7,7 @@ import { useEffect, useState } from "react"
 import ModelUpdateUser from "./ModelUpdateUser";
 import ModelViewUser from "./ModelViewUser.jsx"
 import ModalDeleteUser from "./ModalDeleteUser.jsx";
+import TableUserPaginate from "./TableUserPaginate.jsx";
 const ManageUser = (props) => {
     const [showModelCreateUser, setShowModelCreateUser] = useState(false)
     const [showModelUpdateUser, setShowModelUpdateUser] = useState(false)
@@ -60,7 +61,13 @@ const ManageUser = (props) => {
                     </button>
                 </div>
                 <div className="table-users-container">
-                    <TableUser
+                    {/* <TableUser
+                        listUser={listUser}
+                        handleClickBtnUpate={handleClickBtnUpate}
+                        handleClickView={handleClickView}
+                        handleClickBtnDelete={handleClickBtnDelete}
+                    /> */}
+                    <TableUserPaginate
                         listUser={listUser}
                         handleClickBtnUpate={handleClickBtnUpate}
                         handleClickView={handleClickView}
